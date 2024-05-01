@@ -1,9 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-function Question({ question, onAnswered }) {
+function Question({ setQuestions, question, onAnswered }) {
   const [timeRemaining, setTimeRemaining] = useState(10);
 
   // add useEffect code
+
+  useEffect(()=> {
+    //use setState to update time per second
+    const timer = setTimeout(() => {
+      setTimeRemaining(prevTime=> prevTime - 1)
+    }, 1000)
+//clear timer to reset to 10(timeremaining) first cleanup function
+    return () => clearTimeout(timer);
+    //set questions depend. will cause the effect to rerun when it is changed
+  }, [timeRemaining, setQuestions]);
+
+//conditional to restart at 0
+  useEffect(() => {
+    if (timeRemaining === 0) {
+      setTimeRemaining(10)
+      onAnswered(false)
+      // the dependencies will controll when to call the function
+    }
+  }, [timeRemaining, onAnswered])
 
   function handleAnswer(isCorrect) {
     setTimeRemaining(10);
